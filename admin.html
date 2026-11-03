@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>TrueDeals Admin Panel</title>
+<style>
+:root{--bg:#050816;--card:#0c1226;--line:#1e293b;--tx:#e2e8f0;--mut:#94a3b8;--c1:#06b6d4;--c2:#10b981;--red:#ef4444;--amb:#f59e0b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:env(safe-area-inset-bottom)}
+button,input,select,textarea{font:inherit;color:inherit}
+.hide{display:none!important}
+.wrap{max-width:900px;margin:0 auto;padding:14px}
+header{position:sticky;top:0;z-index:20;background:rgba(5,8,22,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:10px;padding-bottom:10px}
+h1{font-size:17px;margin:0}
+h1 span{background:linear-gradient(90deg,#22d3ee,#34d399);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:0 14px 10px;max-width:900px;margin:0 auto}
+.tab{flex:none;padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:#0b1020;color:var(--mut);font-weight:700;font-size:13px;cursor:pointer}
+.tab.on{background:linear-gradient(135deg,#06b6d4,#10b981);color:#021016;border-color:transparent}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+@media(min-width:600px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.stat b{display:block;font-size:22px}.stat small{color:var(--mut)}
+.btn{border:0;border-radius:12px;padding:10px 14px;font-weight:700;font-size:14px;cursor:pointer;background:#1e293b}
+.btn.pri{background:linear-gradient(135deg,#06b6d4,#10b981);color:#021016}
+.btn.red{background:rgba(239,68,68,.15);color:#fca5a5}
+.btn.sm{padding:7px 10px;font-size:12px;border-radius:10px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row.between{justify-content:space-between}
+input,select,textarea{width:100%;background:#070b1a;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px}
+input[type=checkbox]{width:auto}
+input[type=color]{padding:2px;height:38px}
+label{display:block;font-size:12px;color:var(--mut);margin-bottom:4px;font-weight:600}
+.grid{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+.grid .full{grid-column:1/-1}
+@media(min-width:700px){.grid.g3{grid-template-columns:repeat(3,1fr)}}
+.pitem{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.pitem .info{min-width:0;flex:1 1 200px}
+.pitem .nm{font-weight:800}
+.pitem .sub{font-size:12px;color:var(--mut)}
+.badge{display:inline-block;font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px;margin-left:6px}
+.b-in{background:rgba(16,185,129,.15);color:#6ee7b7}.b-out{background:rgba(239,68,68,.15);color:#fca5a5}
+.sw{width:14px;height:14px;border-radius:50%;display:inline-block;vertical-align:middle;margin-right:4px;border:1px solid #fff3}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+#modal .box{background:#0a0f20;border:1px solid var(--line);border-radius:20px 20px 0 0;width:100%;max-width:720px;max-height:92vh;overflow:auto;padding:16px}
+@media(min-width:700px){#modal{align-items:center}#modal .box{border-radius:20px}}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;background:#0c1226;border:1px solid #334155;padding:10px 18px;border-radius:99px;font-size:14px;transition:.3s;z-index:90;pointer-events:none}
+#toast.on{opacity:1;transform:translateX(-50%)}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login .card{width:100%;max-width:340px}
+.note{font-size:12px;color:var(--mut);line-height:1.5}
+.warn{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.07)}
+.tog{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--tx)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login" class="login">
+  <div class="card">
+    <h1 style="margin-bottom:4px">TrueDeals <span>Admin</span></h1>
+    <p class="note" style="margin:0 0 14px">Dukaan ka control panel. Password daalein.</p>
+    <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+    <button class="btn pri" style="width:100%;margin-top:10px" onclick="doLogin()">Login</button>
+    <p class="note" id="pwHint" style="margin-top:10px">Pehli baar ka password: <b>admin123</b> (login ke baad Settings me badal lein)</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hide">
+  <header>
+    <div class="wrap">
+      <h1>TrueDeals <span>Admin</span></h1>
+      <div class="row">
+        <a class="btn sm" href="index.html" target="_blank" style="text-decoration:none;color:inherit">Website ↗</a>
+        <button class="btn sm" onclick="logout()">Logout</button>
+      </div>
+    </div>
+    <div class="tabs" id="tabs"></div>
+  </header>
+  <main class="wrap" id="main"></main>
+</div>
+
+<div id="modal" class="hide" onclick="if(event.target===this)closeModal()"><div class="box" id="modalBox"></div></div>
+<div id="toast"></div>
+
+<script>
+/* ===== Default data (index.html se liya gaya) ===== */
+const DEF_STORE = {
+  name: 'TrueDeals Mobile Hub',
+  whatsapp: '919876543210',          // country code + number, "+" ke bina
+  phone: '+919876543210',
+  shortAddress: 'Karol Bagh, Delhi',
+  address: 'Shop 12, Gaffar Market, Karol Bagh, New Delhi 110005',
+  openHour: 10, closeHour: 21,
+  hoursText: 'Roz subah 10 baje se raat 9 baje tak',
+  customers: '5,000+', rating: '4.8', since: '2016',
+  offer: '🪔 Diwali Dhamaka: WhatsApp pe book karein, ₹500 extra off paayein!'   // khali chhod do toh banner hat jayega
+};
+const DEF_PHONES = [
+  { id:1, brand:'Apple', name:'iPhone 14', color:'Midnight', ram:6, storage:128, battery:89, condition:'Mint', score:'10/10', price:44999, mrp:79900, box:'Box + Original 20W Charger', flagship:true, stock:true, left:1, tag:'Just Arrived', os:'iOS', age:'14 months old', warranty:'Store warranty 7 days', cam:'iphone', body:['#3a4152','#12161f'], wp:['#0ea5e9','#7c3aed'], glow:'#06b6d4' },
+  { id:2, brand:'Apple', name:'iPhone 13', color:'Starlight', ram:4, storage:128, battery:87, condition:'Superb', score:'9.5/10', price:34999, mrp:69900, box:'Box + Cable', flagship:true, stock:true, left:2, tag:'Best Seller', os:'iOS', age:'2 years old', warranty:'Store warranty 7 days', warn:{Speaker:'Grill pe halka wear, awaaz bilkul theek'}, cam:'iphone', body:['#f4efe6','#cfc6b6'], wp:['#f472b6','#6366f1'], glow:'#f4efe6' },
+  { id:3, brand:'OnePlus', name:'OnePlus 11R 5G', color:'Sonic Black', ram:8, storage:128, battery:94, condition:'Mint', score:'10/10', price:22999, mrp:39999, box:'Box + Original 100W Charger', flagship:false, stock:true, left:2, tag:'Hot Deal', os:'Android', age:'9 months old', warranty:'Brand warranty till Jun 2027', cam:'oneplus', body:['#454a55','#101319'], wp:['#ef4444','#f97316'], glow:'#ef4444' },
+  { id:4, brand:'Samsung', name:'Samsung Galaxy S23', color:'Phantom Black', ram:8, storage:256, battery:91, condition:'Superb', score:'9.5/10', price:38999, mrp:89999, box:'Box + Cable', flagship:true, stock:true, left:1, tag:'Flagship', os:'Android', age:'1.5 years old', warranty:'Store warranty 7 days', cam:'samsung', body:['#2d2d33','#0b0b0e'], wp:['#8b5cf6','#22d3ee'], glow:'#8b5cf6' },
+  { id:5, brand:'Samsung', name:'Samsung Galaxy S21 FE', color:'Graphite', ram:8, storage:128, battery:84, condition:'Good', score:'9/10', price:18499, mrp:54999, box:'Phone + Charger', flagship:false, stock:true, left:3, tag:'', os:'Android', age:'3 years old', warranty:'Store warranty 7 days', warn:{Body:'Frame pe halke hairline scratches'}, cam:'samsung', body:['#757a85','#2f3239'], wp:['#10b981','#0ea5e9'], glow:'#94a3b8' },
+  { id:6, brand:'Vivo', name:'Vivo V29 5G', color:'Peak Blue', ram:8, storage:128, battery:92, condition:'Mint', score:'10/10', price:16499, mrp:32999, box:'Box + Original 80W Charger', flagship:false, stock:true, left:2, tag:'Hot Deal', os:'Android', age:'1 year old', warranty:'Brand warranty till Aug 2027', cam:'vivo', body:['#6bb0ff','#2250c9'], wp:['#f59e0b','#ec4899'], glow:'#3b82f6' },
+  { id:7, brand:'Realme', name:'Realme 12 Pro+ 5G', color:'Submarine Blue', ram:8, storage:256, battery:96, condition:'Mint', score:'10/10', price:14499, mrp:29999, box:'Full Box + Charger', flagship:false, stock:false, left:0, tag:'', os:'Android', age:'7 months old', warranty:'Brand warranty till Mar 2027', cam:'realme', body:['#34e8c8','#0b6aa5'], wp:['#22d3ee','#3b82f6'], glow:'#14b8a6' },
+  { id:8, brand:'Xiaomi', name:'Redmi Note 13 Pro', color:'Arctic White', ram:8, storage:128, battery:95, condition:'Superb', score:'9.5/10', price:12999, mrp:25999, box:'Box + Original 67W Charger', flagship:false, stock:true, left:3, tag:'Budget King', os:'Android', age:'8 months old', warranty:'Brand warranty till Mar 2027', cam:'redmi', body:['#ffffff','#cdd5e1'], wp:['#fb923c','#e11d48'], glow:'#e2e8f0' }
+];
+
+
+const KEY = 'td_admin_data', PWKEY = 'td_admin_pw';
+const $ = s => document.querySelector(s);
+const inr = n => '₹' + Number(n||0).toLocaleString('en-IN');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CAMS = ['iphone','samsung','oneplus','vivo','realme','redmi'];
+const CONDS = ['Mint','Superb','Good','Fair'];
+const SCORE = {Mint:'10/10',Superb:'9.5/10',Good:'9/10',Fair:'8/10'};
+
+const DEF_BRANDS = ['Apple','OnePlus','Samsung','Vivo','Realme','Xiaomi','Google Pixel'];
+const STATUSES = ['Booked','Visiting','Sold','Cancelled'];
+const STCOL = {Booked:'#f59e0b',Visiting:'#06b6d4',Sold:'#10b981',Cancelled:'#ef4444'};
+const PAYS = ['Cash','UPI','Card','EMI'];
+let tab = 'phones', q = '', curPhotos = [];
+let DB = load();
+function norm(d){
+  if(!Array.isArray(d.CATS)) d.CATS = [...new Set([...DEF_BRANDS, ...d.PHONES.map(p=>p.brand)])].map(n => ({name:n, show:true, img:''}));
+  if(!Array.isArray(d.ORDERS)) d.ORDERS = [];
+  return d;
+}
+function load(){
+  try{ const d = JSON.parse(localStorage.getItem(KEY)||'null'); if(d && d.STORE && d.PHONES) return norm(d); }catch(e){}
+  return norm({ STORE: structuredClone(DEF_STORE), PHONES: structuredClone(DEF_PHONES) });
+}
+function save(msg){
+  try{ localStorage.setItem(KEY, JSON.stringify(DB)); toast(msg || 'Save ho gaya ✓'); }
+  catch(e){ toast('Storage full! Photos kam ya chhoti karein'); }
+}
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('on'),2000); }
+
+/* ===== Auth (sirf basic — real security nahi) ===== */
+const getPw = () => { try{ return localStorage.getItem(PWKEY) || 'admin123'; }catch(e){ return 'admin123'; } };
+function doLogin(){
+  if($('#pw').value === getPw()){ try{sessionStorage.setItem('td_in','1')}catch(e){} start(); }
+  else toast('Galat password');
+}
+function logout(){ try{sessionStorage.removeItem('td_in')}catch(e){} location.reload(); }
+$('#pw').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+function start(){ $('#login').classList.add('hide'); $('#app').classList.remove('hide'); render(); }
+try{ if(sessionStorage.getItem('td_in')==='1') start(); }catch(e){}
+
+/* ===== Tabs ===== */
+const TABS = [['phones','📱 Phones'],['cats','🗂️ Categories'],['orders','🧾 Orders'],['store','🏪 Dukaan'],['publish','🚀 Publish / Backup'],['settings','⚙️ Settings']];
+function render(){
+  $('#tabs').innerHTML = TABS.map(([k,l]) => `<button class="tab ${tab===k?'on':''}" onclick="tab='${k}';render()">${l}</button>`).join('');
+  $('#main').innerHTML = ({phones:vPhones, cats:vCats, orders:vOrders, store:vStore, publish:vPublish, settings:vSettings})[tab]();
+}
+
+/* ===== PHONES ===== */
+function vPhones(){
+  const P = DB.PHONES, inS = P.filter(p=>p.stock);
+  const val = inS.reduce((a,p)=>a+Number(p.price||0),0);
+  const list = P.filter(p => (p.name+' '+p.brand+' '+p.color).toLowerCase().includes(q.toLowerCase()));
+  return `
+  <div class="stats">
+    <div class="stat"><b>${P.length}</b><small>Total phones</small></div>
+    <div class="stat"><b style="color:#6ee7b7">${inS.length}</b><small>In stock</small></div>
+    <div class="stat"><b style="color:#fca5a5">${P.length-inS.length}</b><small>Sold out</small></div>
+    <div class="stat"><b>${inr(val)}</b><small>Stock value</small></div>
+  </div>
+  <div class="row" style="margin-bottom:12px">
+    <input style="flex:1 1 160px" placeholder="Phone search…" value="${esc(q)}" oninput="q=this.value;renderList()">
+    <button class="btn pri" onclick="editPhone()">+ Naya Phone</button>
+  </div>
+  <div id="plist">${listHTML(list)}</div>`;
+}
+function listHTML(list){
+  if(!list.length) return '<div class="card note">Koi phone nahi mila.</div>';
+  return list.map(p => `
+  <div class="card pitem">
+    <div class="info">
+      <div class="nm">${p.photos?.length ? `<img src="${p.photos[0]}" style="width:30px;height:30px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:6px">` : `<span class="sw" style="background:${esc(p.body?.[0]||'#444')}"></span>`}${esc(p.name)}
+        <span class="badge ${p.stock?'b-in':'b-out'}">${p.stock?'IN STOCK'+(p.left?' · '+p.left:''):'SOLD OUT'}</span></div>
+      <div class="sub">${esc(p.brand)} · ${p.ram}GB/${p.storage}GB · 🔋${p.battery}% · ${esc(p.condition)} · <b style="color:#e2e8f0">${inr(p.price)}</b> <s>${inr(p.mrp)}</s></div>
+    </div>
+    <div class="row">
+      <button class="btn sm" onclick="toggleStock(${p.id})">${p.stock?'Sold out karo':'Stock me lao'}</button>
+      <button class="btn sm" onclick="editPhone(${p.id})">Edit</button>
+      <button class="btn sm" onclick="dupPhone(${p.id})">Copy</button>
+      <button class="btn sm red" onclick="delPhone(${p.id})">Delete</button>
+    </div>
+  </div>`).join('');
+}
+function renderList(){
+  const list = DB.PHONES.filter(p => (p.name+' '+p.brand+' '+p.color).toLowerCase().includes(q.toLowerCase()));
+  $('#plist').innerHTML = listHTML(list);
+}
+const nextId = () => Math.max(0, ...DB.PHONES.map(p=>p.id)) + 1;
+function toggleStock(id){
+  const p = DB.PHONES.find(x=>x.id===id); p.stock = !p.stock;
+  p.left = p.stock ? (p.left>0 ? p.left : 1) : 0;
+  save(p.stock ? 'Stock me aa gaya' : 'Sold out mark ho gaya'); render();
+}
+function dupPhone(id){
+  const c = structuredClone(DB.PHONES.find(x=>x.id===id)); c.id = nextId(); c.name += ' (copy)';
+  DB.PHONES.push(c); save('Copy ban gayi'); render();
+}
+function delPhone(id){
+  const p = DB.PHONES.find(x=>x.id===id);
+  if(confirm(`"${p.name}" delete karna hai?`)){ DB.PHONES = DB.PHONES.filter(x=>x.id!==id); save('Delete ho gaya'); render(); }
+}
+function editPhone(id){
+  const p = id ? DB.PHONES.find(x=>x.id===id) : {
+    brand:'Apple', name:'', color:'', ram:8, storage:128, battery:90, condition:'Mint', score:'10/10', price:0, mrp:0,
+    box:'Box + Charger', flagship:false, stock:true, left:1, tag:'', os:'Android', age:'1 year old',
+    warranty:'Store warranty 7 days', cam:'samsung', body:['#3a4152','#12161f'], wp:['#0ea5e9','#7c3aed'], glow:'#06b6d4'
+  };
+  const wk = p.warn ? Object.keys(p.warn)[0] || '' : '', wv = wk ? p.warn[wk] : '';
+  const brands = [...new Set([...DB.CATS.map(c=>c.name), ...DB.PHONES.map(x=>x.brand)])];
+  const f = (l,id,v,t='text',x='') => `<div><label>${l}</label><input id="f_${id}" type="${t}" value="${esc(v)}" ${x}></div>`;
+  const sel = (l,id,arr,v) => `<div><label>${l}</label><select id="f_${id}">${arr.map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join('')}</select></div>`;
+  $('#modalBox').innerHTML = `
+  <div class="row between" style="margin-bottom:10px"><h1>${id?'Phone Edit':'Naya Phone'}</h1><button class="btn sm" onclick="closeModal()">✕</button></div>
+  <div class="grid g3">
+    <div><label>Brand</label><input id="f_brand" list="brandList" value="${esc(p.brand)}"><datalist id="brandList">${brands.map(b=>`<option value="${esc(b)}">`).join('')}</datalist></div>
+    ${f('Model name','name',p.name)}
+    ${f('Color','color',p.color)}
+    ${f('RAM (GB)','ram',p.ram,'number')}
+    ${f('Storage (GB)','storage',p.storage,'number')}
+    ${f('Battery health %','battery',p.battery,'number')}
+    ${sel('Condition','condition',CONDS,p.condition)}
+    ${f('Score (e.g. 9.5/10)','score',p.score)}
+    ${sel('OS','os',['Android','iOS'],p.os)}
+    ${f('Selling price ₹','price',p.price,'number')}
+    ${f('MRP ₹','mrp',p.mrp,'number')}
+    ${f('Stock count','left',p.left,'number')}
+    <div class="full">${f('Box / Accessories','box',p.box)}</div>
+    ${f('Phone ki age','age',p.age)}
+    ${f('Warranty','warranty',p.warranty)}
+    ${f('Tag (Hot Deal, Best Seller…)','tag',p.tag)}
+    ${f('Dikkat – part (optional)','wk',wk,'text','placeholder="Speaker / Body"')}
+    <div class="full">${f('Dikkat – detail (optional)','wv',wv,'text','placeholder="Halka scratch, kaam pe asar nahi"')}</div>
+    ${sel('Camera design (illustration)','cam',CAMS,p.cam)}
+    <div class="tog"><input type="checkbox" id="f_stock" ${p.stock?'checked':''}> In stock</div>
+    <div class="tog"><input type="checkbox" id="f_flagship" ${p.flagship?'checked':''}> Flagship deal</div>
+    <div class="full"><label>📷 Phone ki photos (max 4 — pehli photo main dikhegi)</label>
+      <div id="photoBox" class="row" style="margin-bottom:8px"></div>
+      <label class="btn sm" style="display:inline-block;margin:0;cursor:pointer;color:inherit">+ Photo add karo<input type="file" accept="image/*" multiple class="hide" onchange="addPhotos(this.files);this.value=''"></label>
+      <div class="note" style="margin-top:4px">Photo apne-aap chhoti (compress) ho jaati hai. Photo na ho to website par illustration dikhega.</div></div>
+    <div class="full"><label>Phone ke colors (illustration)</label>
+      <div class="grid" style="grid-template-columns:repeat(5,1fr)">
+        <input type="color" id="f_b1" value="${p.body[0]}" title="Back 1"><input type="color" id="f_b2" value="${p.body[1]}" title="Back 2">
+        <input type="color" id="f_w1" value="${p.wp[0]}" title="Wallpaper 1"><input type="color" id="f_w2" value="${p.wp[1]}" title="Wallpaper 2">
+        <input type="color" id="f_glow" value="${p.glow}" title="Glow">
+      </div>
+      <div class="note" style="margin-top:4px">Back 1 · Back 2 · Screen 1 · Screen 2 · Glow</div></div>
+  </div>
+  <div class="row" style="margin-top:14px;justify-content:flex-end">
+    <button class="btn" onclick="closeModal()">Cancel</button>
+    <button class="btn pri" onclick="savePhone(${id||0})">Save</button>
+  </div>`;
+  curPhotos = [...(p.photos || [])]; renderPhotos();
+  $('#modal').classList.remove('hide');
+  $('#f_condition').addEventListener('change', e => { if(!id) $('#f_score').value = SCORE[e.target.value] || ''; });
+}
+function closeModal(){ $('#modal').classList.add('hide'); }
+function savePhone(id){
+  const g = k => $('#f_'+k).value.trim(), n = k => Number(g(k)) || 0;
+  if(!g('name')){ toast('Model name zaroori hai'); return; }
+  if(n('price')<=0){ toast('Price daalein'); return; }
+  const o = {
+    id: id || nextId(), brand:g('brand'), name:g('name'), color:g('color'), ram:n('ram'), storage:n('storage'), battery:n('battery'),
+    condition:g('condition'), score:g('score'), price:n('price'), mrp:n('mrp') || n('price'), box:g('box'),
+    flagship:$('#f_flagship').checked, stock:$('#f_stock').checked, left:n('left'), tag:g('tag'), os:g('os'), age:g('age'),
+    warranty:g('warranty'), cam:g('cam'), body:[g('b1'),g('b2')], wp:[g('w1'),g('w2')], glow:g('glow')
+  };
+  if(!o.stock) o.left = 0; else if(o.left<1) o.left = 1;
+  if(curPhotos.length) o.photos = [...curPhotos];
+  if(g('wk') && g('wv')) o.warn = { [g('wk')]: g('wv') };
+  if(id){ const i = DB.PHONES.findIndex(x=>x.id===id); DB.PHONES[i] = o; } else DB.PHONES.push(o);
+  closeModal(); save(id?'Update ho gaya':'Phone add ho gaya'); render();
+}
+
+/* ===== PHOTOS ===== */
+function compress(file, M = 800){
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const k = Math.min(1, M / Math.max(img.width, img.height));
+      const c = document.createElement('canvas'); c.width = Math.round(img.width*k); c.height = Math.round(img.height*k);
+      const x = c.getContext('2d'); x.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', 0.72));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(); };
+    img.src = url;
+  });
+}
+async function addPhotos(files){
+  for(const f of [...files]){
+    if(curPhotos.length >= 4){ toast('Max 4 photos'); break; }
+    if(!f.type.startsWith('image/')) continue;
+    try{ curPhotos.push(await compress(f)); }catch(e){ toast('Photo padh nahi paaye'); }
+  }
+  renderPhotos();
+}
+function renderPhotos(){
+  const b = $('#photoBox'); if(!b) return;
+  b.innerHTML = curPhotos.length ? curPhotos.map((s,i) => `
+    <div style="position:relative">
+      <img src="${s}" style="width:76px;height:76px;object-fit:cover;border-radius:10px;border:2px solid ${i===0?'#10b981':'#1e293b'}">
+      <button class="btn sm red" style="position:absolute;top:-6px;right:-6px;padding:2px 7px" onclick="rmPhoto(${i})">✕</button>
+      ${i===0 ? '<small style="position:absolute;bottom:3px;left:4px;background:#10b981;color:#021016;border-radius:6px;padding:0 5px;font-size:10px;font-weight:800">MAIN</small>'
+               : `<button class="btn sm" style="position:absolute;bottom:3px;left:3px;padding:1px 6px;font-size:10px" onclick="mainPhoto(${i})">Main</button>`}
+    </div>`).join('') : '<span class="note">Abhi koi photo nahi</span>';
+}
+function rmPhoto(i){ curPhotos.splice(i,1); renderPhotos(); }
+function mainPhoto(i){ const [s] = curPhotos.splice(i,1); curPhotos.unshift(s); renderPhotos(); }
+
+/* ===== CATEGORIES ===== */
+function vCats(){
+  const C = DB.CATS;
+  return `
+  <div class="card">
+    <b>Naya category</b>
+    <div class="row" style="margin-top:8px"><input id="newCat" style="flex:1 1 160px" placeholder="Brand / category ka naam"><button class="btn pri" onclick="addCat()">+ Add</button></div>
+    <p class="note" style="margin-top:8px">Ye website ke brand filter (pills) me dikhte hain. Image optional hai — chhota logo/icon lagayein. Order badalne ke liye ↑ ↓ use karein.</p>
+  </div>
+  ${C.length ? C.map((c,i) => {
+    const n = DB.PHONES.filter(p => p.brand === c.name).length;
+    return `<div class="card pitem">
+      <div class="info"><div class="nm">${c.img ? `<img src="${c.img}" style="width:30px;height:30px;object-fit:cover;border-radius:50%;vertical-align:middle;margin-right:6px">` : '<span class="sw" style="background:#475569"></span>'}${esc(c.name)}
+        <span class="badge ${c.show!==false?'b-in':'b-out'}">${c.show!==false?'VISIBLE':'HIDDEN'}</span></div>
+        <div class="sub">${n} phone${n!==1?'s':''}</div></div>
+      <div class="row">
+        <button class="btn sm" onclick="moveCat(${i},-1)" ${i===0?'disabled':''}>↑</button>
+        <button class="btn sm" onclick="moveCat(${i},1)" ${i===C.length-1?'disabled':''}>↓</button>
+        <button class="btn sm" onclick="toggleCat(${i})">${c.show!==false?'Hide':'Show'}</button>
+        <label class="btn sm" style="margin:0;cursor:pointer;color:inherit">🖼 ${c.img?'Badlo':'Image'}<input type="file" accept="image/*" class="hide" onchange="catImg(${i},this.files[0]);this.value=''"></label>
+        ${c.img ? `<button class="btn sm" onclick="rmCatImg(${i})">Image hatao</button>` : ''}
+        <button class="btn sm" onclick="renameCat(${i})">Rename</button>
+        <button class="btn sm red" onclick="delCat(${i})">Delete</button>
+      </div></div>`;
+  }).join('') : '<div class="card note">Abhi koi category nahi.</div>'}`;
+}
+function addCat(){
+  const n = $('#newCat').value.trim();
+  if(!n) return toast('Naam likhein');
+  if(DB.CATS.some(c => c.name.toLowerCase() === n.toLowerCase())) return toast('Ye category pehle se hai');
+  DB.CATS.push({name:n, show:true, img:''}); save('Category add ho gayi'); render();
+}
+function moveCat(i,d){ const j=i+d; if(j<0||j>=DB.CATS.length) return; [DB.CATS[i],DB.CATS[j]]=[DB.CATS[j],DB.CATS[i]]; save('Order badal gaya'); render(); }
+function toggleCat(i){ DB.CATS[i].show = DB.CATS[i].show === false; save(DB.CATS[i].show ? 'Category visible' : 'Category hide ho gayi'); render(); }
+function renameCat(i){
+  const old = DB.CATS[i].name, n = (prompt('Naya naam', old)||'').trim();
+  if(!n || n===old) return;
+  if(DB.CATS.some((c,j) => j!==i && c.name.toLowerCase()===n.toLowerCase())) return toast('Ye naam pehle se hai');
+  DB.CATS[i].name = n; DB.PHONES.forEach(p => { if(p.brand===old) p.brand = n; });
+  save('Rename ho gaya'); render();
+}
+function delCat(i){
+  const c = DB.CATS[i], n = DB.PHONES.filter(p => p.brand===c.name).length;
+  if(confirm(`"${c.name}" category hataani hai?` + (n ? `\n\n${n} phone iss brand ke hain — wo delete nahi honge, bas category list se hat jayegi.` : ''))){ DB.CATS.splice(i,1); save('Category delete ho gayi'); render(); }
+}
+async function catImg(i,f){
+  if(!f) return;
+  try{ DB.CATS[i].img = await compress(f, 120); save('Image lag gayi'); render(); }catch(e){ toast('Image padh nahi paaye'); }
+}
+function rmCatImg(i){ DB.CATS[i].img = ''; save('Image hat gayi'); render(); }
+
+/* ===== ORDERS (booking tracking) ===== */
+let ofilter = 'All', oq = '';
+const fdt = t => new Date(t).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+const nextOid = () => Math.max(0, ...DB.ORDERS.map(o=>o.id)) + 1;
+function vOrders(){
+  const O = DB.ORDERS, cnt = s => O.filter(o=>o.status===s).length;
+  const rev = O.filter(o=>o.status==='Sold').reduce((a,o)=>a+Number(o.price||0),0);
+  return `
+  <div class="stats">
+    <div class="stat"><b>${O.length}</b><small>Total orders</small></div>
+    <div class="stat"><b style="color:#fbbf24">${cnt('Booked')+cnt('Visiting')}</b><small>Active (Booked/Visiting)</small></div>
+    <div class="stat"><b style="color:#6ee7b7">${cnt('Sold')}</b><small>Sold</small></div>
+    <div class="stat"><b>${inr(rev)}</b><small>Sale amount</small></div>
+  </div>
+  <div class="row" style="margin-bottom:10px">
+    <input style="flex:1 1 160px" placeholder="Customer / phone search…" value="${esc(oq)}" oninput="oq=this.value;renderOList()">
+    <button class="btn pri" onclick="editOrder()">+ Naya Order</button>
+  </div>
+  <div class="row" style="margin-bottom:12px">${['All',...STATUSES].map(s => `<button class="tab ${ofilter===s?'on':''}" onclick="ofilter='${s}';render()">${s}${s==='All'?'':' · '+cnt(s)}</button>`).join('')}</div>
+  <div id="olist">${oListHTML()}</div>
+  <p class="note">Orders sirf is browser me save hote hain aur website par publish <b>nahi</b> hote. WhatsApp pe booking aane par yahan entry kar lein; "Sold" karte hi stock apne-aap ghat jata hai.</p>`;
+}
+function oListHTML(){
+  const t = oq.toLowerCase();
+  const list = DB.ORDERS.filter(o => (ofilter==='All' || o.status===ofilter) && (`${o.customer} ${o.mobile} ${o.phoneName}`).toLowerCase().includes(t)).sort((a,b)=>b.created-a.created);
+  if(!list.length) return '<div class="card note">Koi order nahi mila.</div>';
+  return list.map(o => {
+    const last = (o.log||[]).slice(-1)[0];
+    return `<div class="card">
+    <div class="row between">
+      <div class="nm">${esc(o.customer||'Customer')} <span class="badge" style="background:${STCOL[o.status]}22;color:${STCOL[o.status]}">${o.status.toUpperCase()}</span></div>
+      <div class="sub">#${o.id} · ${fdt(o.created)}</div>
+    </div>
+    <div class="sub" style="margin-top:4px">📱 <b style="color:#e2e8f0">${esc(o.phoneName)}</b> · ${inr(o.price)} · ${esc(o.pay||'')} ${o.mobile?'· 📞 '+esc(o.mobile):''}</div>
+    ${o.note ? `<div class="sub" style="margin-top:4px">📝 ${esc(o.note)}</div>` : ''}
+    <div class="row" style="margin-top:8px">${(o.log||[]).map(l => `<span class="note"><span class="sw" style="background:${STCOL[l.s]}"></span>${l.s} ${fdt(l.t)}</span>`).join('<span class="note">→</span>')}</div>
+    <div class="row" style="margin-top:10px">
+      <select style="width:auto" onchange="setOStatus(${o.id},this.value)">${STATUSES.map(s=>`<option ${s===o.status?'selected':''}>${s}</option>`).join('')}</select>
+      ${o.mobile ? `<a class="btn sm" style="text-decoration:none;color:inherit" target="_blank" href="${waCust(o)}">WhatsApp</a>` : ''}
+      <button class="btn sm" onclick="editOrder(${o.id})">Edit</button>
+      <button class="btn sm red" onclick="delOrder(${o.id})">Delete</button>
+    </div></div>`;
+  }).join('');
+}
+function renderOList(){ const e = $('#olist'); if(e) e.innerHTML = oListHTML(); }
+function waCust(o){
+  let n = String(o.mobile||'').replace(/\D/g,''); if(n.length===10) n = '91'+n;
+  const m = o.status==='Sold' ? `Dhanyavaad ${o.customer||''}! ${o.phoneName} kharidne ke liye shukriya. Koi dikkat ho toh bataiye. — ${DB.STORE.name}`
+    : o.status==='Cancelled' ? `Hello ${o.customer||''}, aapka ${o.phoneName} ka order cancel mark hua hai. Kuch aur chahiye toh bataiye. — ${DB.STORE.name}`
+    : `Hello ${o.customer||''}, aapka ${o.phoneName} (${inr(o.price)}) hamare paas hold hai. Dukaan pe aakar check kar lijiye. — ${DB.STORE.name}`;
+  return `https://wa.me/${n}?text=${encodeURIComponent(m)}`;
+}
+function applyStock(o, s){
+  const p = DB.PHONES.find(x=>x.id===o.phoneId); if(!p) return;
+  if(s==='Sold' && !o.adj){ p.left = Math.max(0,(p.left||0)-1); if(p.left===0) p.stock = false; o.adj = true; }
+  else if(s!=='Sold' && o.adj){ p.left = (p.left||0)+1; p.stock = true; o.adj = false; }
+}
+function setOStatus(id,s){
+  const o = DB.ORDERS.find(x=>x.id===id); if(!o || o.status===s) return;
+  o.status = s; (o.log = o.log||[]).push({s, t:Date.now()}); applyStock(o,s);
+  save('Status: '+s); render();
+}
+function delOrder(id){
+  const o = DB.ORDERS.find(x=>x.id===id);
+  if(confirm(`Order #${id} delete karna hai?` + (o.adj ? '\n(Sold tha — stock wapas add ho jayega)' : ''))){ applyStock(o,'Cancelled'); DB.ORDERS = DB.ORDERS.filter(x=>x.id!==id); save('Order delete ho gaya'); render(); }
+}
+function editOrder(id){
+  const o = id ? DB.ORDERS.find(x=>x.id===id) : {customer:'',mobile:'',phoneId:'',price:0,pay:'Cash',status:'Booked',note:''};
+  const ph = [...DB.PHONES].sort((a,b)=>b.stock-a.stock);
+  $('#modalBox').innerHTML = `
+  <div class="row between" style="margin-bottom:10px"><h1>${id?'Order #'+id+' Edit':'Naya Order'}</h1><button class="btn sm" onclick="closeModal()">✕</button></div>
+  <div class="grid">
+    <div><label>Customer ka naam</label><input id="o_customer" value="${esc(o.customer)}"></div>
+    <div><label>Mobile number</label><input id="o_mobile" type="tel" value="${esc(o.mobile)}"></div>
+    <div class="full"><label>Phone</label><select id="o_phone" onchange="oPick()"><option value="">— chunein —</option>${ph.map(p=>`<option value="${p.id}" ${p.id===o.phoneId?'selected':''}>${esc(p.name)} (${p.ram}/${p.storage}) · ${inr(p.price)}${p.stock?'':' · SOLD OUT'}</option>`).join('')}</select></div>
+    <div><label>Final price ₹</label><input id="o_price" type="number" value="${o.price}"></div>
+    <div><label>Payment</label><select id="o_pay">${PAYS.map(s=>`<option ${s===o.pay?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div><label>Status</label><select id="o_status">${STATUSES.map(s=>`<option ${s===o.status?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="full"><label>Note</label><input id="o_note" value="${esc(o.note)}" placeholder="Kab aayenge, discount, exchange…"></div>
+  </div>
+  <div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="saveOrder(${id||0})">Save</button></div>`;
+  $('#modal').classList.remove('hide');
+}
+function oPick(){ const p = DB.PHONES.find(x=>x.id===Number($('#o_phone').value)); if(p) $('#o_price').value = p.price; }
+function saveOrder(id){
+  const p = DB.PHONES.find(x=>x.id===Number($('#o_phone').value));
+  if(!p) return toast('Phone chunein');
+  const v = k => $('#o_'+k).value.trim(), st = v('status');
+  if(id){
+    const o = DB.ORDERS.find(x=>x.id===id);
+    if(o.adj && o.phoneId!==p.id) applyStock(o,'Cancelled');           // phone badla: purana stock wapas
+    Object.assign(o, {customer:v('customer'), mobile:v('mobile'), phoneId:p.id, phoneName:p.name, price:Number(v('price'))||p.price, pay:v('pay'), note:v('note')});
+    if(o.status!==st){ o.status = st; (o.log=o.log||[]).push({s:st,t:Date.now()}); }
+    applyStock(o, st);
+  } else {
+    const o = {id:nextOid(), created:Date.now(), customer:v('customer'), mobile:v('mobile'), phoneId:p.id, phoneName:p.name, price:Number(v('price'))||p.price, pay:v('pay'), status:st, note:v('note'), log:[{s:st,t:Date.now()}], adj:false};
+    DB.ORDERS.push(o); applyStock(o, st);
+  }
+  closeModal(); save(id?'Order update ho gaya':'Order add ho gaya'); render();
+}
+
+/* ===== STORE ===== */
+function vStore(){
+  const s = DB.STORE;
+  const f = (l,k,t='text',full=false) => `<div class="${full?'full':''}"><label>${l}</label><input id="s_${k}" type="${t}" value="${esc(s[k])}"></div>`;
+  return `<div class="card"><div class="grid">
+    ${f('Dukaan ka naam','name','text',true)}
+    ${f('WhatsApp (country code ke saath, + ke bina)','whatsapp')}
+    ${f('Phone (+91…)','phone')}
+    ${f('Short address (header me)','shortAddress','text',true)}
+    ${f('Poora address','address','text',true)}
+    ${f('Khulne ka time (0-23 hour)','openHour','number')}
+    ${f('Band hone ka time (0-23 hour)','closeHour','number')}
+    ${f('Timing text','hoursText','text',true)}
+    ${f('Customers (e.g. 5,000+)','customers')}
+    ${f('Rating','rating')}
+    ${f('Since (saal)','since')}
+    <div class="full"><label>Offer banner (khali = banner hide)</label><textarea id="s_offer" rows="2">${esc(s.offer)}</textarea></div>
+  </div>
+  <div class="row" style="margin-top:12px;justify-content:flex-end"><button class="btn pri" onclick="saveStore()">Save Dukaan Details</button></div></div>`;
+}
+function saveStore(){
+  const s = DB.STORE;
+  ['name','whatsapp','phone','shortAddress','address','hoursText','customers','rating','since','offer'].forEach(k => s[k] = $('#s_'+k).value.trim());
+  s.whatsapp = s.whatsapp.replace(/\D/g,'');
+  s.openHour = Number($('#s_openHour').value)||10; s.closeHour = Number($('#s_closeHour').value)||21;
+  save('Dukaan details save ho gayi');
+}
+
+/* ===== PUBLISH / BACKUP ===== */
+function vPublish(){
+  return `
+  <div class="card warn"><b>Zaroori samjhein</b>
+    <p class="note">Admin me kiye changes is browser me turant <b>index.html</b> par dikhte hain (same folder/domain par). Doosre customers ko dikhane ke liye neeche se <b>updated index.html</b> download karke apni hosting par upload karein.</p></div>
+  <div class="card">
+    <b>1. Updated website file banao</b>
+    <p class="note">Ye aapka index.html lekar usme naya data daal dega.</p>
+    <div class="row"><button class="btn pri" onclick="buildIndex()">⬇ Download updated index.html</button></div>
+    <p class="note" style="margin-top:10px">Agar upar wala kaam na kare (file:// se khola ho), to apni original <b>index.html</b> yahan chunein:</p>
+    <input type="file" accept=".html" onchange="buildFromFile(this.files[0])">
+  </div>
+  <div class="card">
+    <b>2. Backup / Restore</b>
+    <div class="row" style="margin-top:8px">
+      <button class="btn" onclick="exportJSON()">⬇ Data backup (.json)</button>
+      <label class="btn" style="margin:0;cursor:pointer;color:inherit">⬆ Backup restore<input type="file" accept=".json" class="hide" onchange="importJSON(this.files[0])"></label>
+    </div>
+  </div>
+  <div class="card">
+    <b>3. Reset</b>
+    <p class="note">Phones, categories aur dukaan details original par wapas (orders nahi hatenge).</p>
+    <button class="btn red" onclick="resetAll()">Original data par wapas jao</button>
+  </div>`;
+}
+function dl(name, text, type){
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text],{type})); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function exportJSON(){ dl('truedeals-backup.json', JSON.stringify(DB,null,2), 'application/json'); }
+function importJSON(file){
+  if(!file) return;
+  file.text().then(t => {
+    try{ const d = JSON.parse(t); if(!d.STORE || !Array.isArray(d.PHONES)) throw 0; DB = norm(d); save('Backup restore ho gaya'); render(); }
+    catch(e){ toast('File sahi nahi hai'); }
+  });
+}
+function resetAll(){
+  if(confirm('Phones, categories aur dukaan ke changes hat jayenge (Orders safe rahenge). Pakka?')){ const ord = DB.ORDERS; try{localStorage.removeItem(KEY)}catch(e){} DB = load(); DB.ORDERS = ord; save('Reset ho gaya'); render(); }
+}
+function makeIndex(html){
+  const pub = { STORE: DB.STORE, PHONES: DB.PHONES, CATS: DB.CATS };   // ORDERS (customer data) kabhi public file me nahi jaata
+  const json = JSON.stringify(pub).replace(/</g,'\\u003c');
+  const tag = `<script id="td-data">window.TD_DATA=${json};<\/script>`;
+  if(!/<script id="td-data">[\s\S]*?<\/script>/.test(html)){ toast('Ye file patch wali index.html nahi lagti'); return null; }
+  return html.replace(/<script id="td-data">[\s\S]*?<\/script>/, () => tag);
+}
+async function buildIndex(){
+  try{
+    const r = await fetch('index.html', {cache:'no-store'});
+    if(!r.ok) throw 0;
+    const out = makeIndex(await r.text()); if(out) { dl('index.html', out, 'text/html'); toast('index.html ready'); }
+  }catch(e){ toast('Auto-load nahi hua — neeche se file chunein'); }
+}
+async function buildFromFile(file){
+  if(!file) return;
+  const out = makeIndex(await file.text()); if(out){ dl('index.html', out, 'text/html'); toast('index.html ready'); }
+}
+
+/* ===== SETTINGS ===== */
+function vSettings(){
+  return `<div class="card"><b>Password badlo</b>
+    <div class="grid" style="margin-top:8px">
+      <div><label>Naya password</label><input id="np" type="password"></div>
+      <div><label>Dobara likhein</label><input id="np2" type="password"></div>
+    </div>
+    <div class="row" style="margin-top:10px"><button class="btn pri" onclick="chPw()">Update</button></div>
+    <p class="note" style="margin-top:10px">Note: ye static-site panel hai, password sirf is browser me check hota hai. Isliye admin.html ko public link par share na karein, aur isse hosting par sirf tabhi daalein jab file ka naam secret rakhein.</p></div>`;
+}
+function chPw(){
+  const a=$('#np').value, b=$('#np2').value;
+  if(a.length<4) return toast('Kam se kam 4 akshar');
+  if(a!==b) return toast('Dono password alag hain');
+  try{ localStorage.setItem(PWKEY,a); toast('Password badal gaya'); }catch(e){ toast('Save nahi hua'); }
+}
+</script>
+</body>
+</html>
