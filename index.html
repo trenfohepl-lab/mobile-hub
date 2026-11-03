@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050816">
+<title>TrueDeals Mobile Hub — Certified Pre-Owned Smartphones</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: { fontFamily: { sans: ['"Plus Jakarta Sans"','system-ui','sans-serif'] } } } }
+</script>
+<style>
+  html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+  body { background:#050816; font-family:'Plus Jakarta Sans',system-ui,sans-serif; }
+  .bg-aurora {
+    background:
+      radial-gradient(55% 35% at 12% 0%, rgba(6,182,212,.18), transparent 60%),
+      radial-gradient(45% 30% at 92% 8%, rgba(16,185,129,.15), transparent 60%),
+      radial-gradient(40% 30% at 50% 100%, rgba(99,102,241,.10), transparent 60%),
+      #050816;
+  }
+  .glass { background:rgba(12,18,38,.62); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); }
+  .no-scrollbar::-webkit-scrollbar{display:none} .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+  .grad-text { background:linear-gradient(90deg,#22d3ee,#34d399); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .pill-active { background:linear-gradient(135deg,#06b6d4,#10b981); color:#021016; border-color:transparent; box-shadow:0 0 22px rgba(6,182,212,.5); }
+  .card { transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s, border-color .35s; }
+  .card:hover { transform:translateY(-6px); border-color:rgba(6,182,212,.5); box-shadow:0 22px 60px -14px rgba(6,182,212,.32); }
+  .card .ph { transition:transform .6s cubic-bezier(.2,.8,.2,1); }
+  .card:hover .ph { transform:scale(1.07) translateY(-4px); }
+  .ph svg, .hero-ph svg { filter:drop-shadow(0 20px 22px rgba(0,0,0,.55)); }
+  .btn-wa { background:linear-gradient(135deg,#22c55e,#10b981 50%,#059669); box-shadow:0 8px 26px -6px rgba(16,185,129,.6); transition:all .25s; }
+  .btn-wa:hover { box-shadow:0 12px 32px -4px rgba(16,185,129,.8); transform:translateY(-1px); }
+  .btn-wa:active { transform:scale(.97); }
+  .pulse-dot::after { content:''; position:absolute; inset:0; border-radius:9999px; background:#10b981; animation:ping 1.6s cubic-bezier(0,0,.2,1) infinite; }
+  @keyframes ping { 75%,100% { transform:scale(2.6); opacity:0; } }
+  .fade-up { animation:fadeUp .6s both cubic-bezier(.2,.8,.2,1); }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:none} }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+  .floaty { animation:float 5s ease-in-out infinite; }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .marquee { display:flex; width:max-content; animation:marquee 38s linear infinite; }
+  .marquee:hover { animation-play-state:paused; }
+  .shine { position:relative; overflow:hidden; }
+  .shine::after { content:''; position:absolute; top:0; left:-120%; width:60%; height:100%; background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent); transform:skewX(-20deg); animation:shine 3.2s infinite; }
+  @keyframes shine { 0%{left:-120%} 60%,100%{left:160%} }
+  #overlay { transition:opacity .3s; }
+  #sheet { transition:transform .4s cubic-bezier(.2,.8,.2,1), opacity .3s; }
+  @media (max-width:767px){ #sheet.closed{ transform:translateY(100%);} }
+  @media (min-width:768px){ #sheet.closed{ transform:scale(.94) translateY(12px); opacity:0;} }
+  details>summary { list-style:none; cursor:pointer; } details>summary::-webkit-details-marker{display:none}
+  details[open] .chev { transform:rotate(180deg); } .chev{ transition:transform .3s; }
+  .toast { transition:all .35s; }
+  select { background-image:none; }
+</style>
+</head>
+<body class="bg-aurora text-slate-200 antialiased min-h-screen selection:bg-cyan-500/30">
+
+<!-- ANNOUNCEMENT BAR -->
+<div id="offerBar" class="hidden bg-gradient-to-r from-cyan-500 via-emerald-500 to-cyan-500 text-slate-950 text-center text-[12px] sm:text-sm font-bold py-2 px-3">
+  <span id="offerText"></span>
+</div>
+
+<!-- HEADER -->
+<header class="sticky top-0 z-40 glass border-b border-slate-800/80">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-11 h-11 shrink-0 rounded-2xl bg-gradient-to-br from-cyan-400 to-emerald-500 grid place-items-center shadow-[0_0_26px_rgba(6,182,212,.55)]">
+        <i class="fa-solid fa-mobile-screen-button text-slate-950 text-lg"></i>
+      </div>
+      <div class="min-w-0">
+        <div class="flex items-center gap-1.5">
+          <h1 class="font-extrabold text-white text-[15px] sm:text-lg leading-tight truncate">TrueDeals <span class="grad-text">Mobile Hub</span></h1>
+          <span class="shrink-0 inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-bold text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 rounded-full px-1.5 py-0.5"><i class="fa-solid fa-circle-check"></i>VERIFIED</span>
+        </div>
+        <div class="flex items-center gap-2 text-[11px] sm:text-xs text-slate-400">
+          <span class="relative inline-flex w-2 h-2 shrink-0"><span id="openDot" class="pulse-dot relative inline-block w-2 h-2 rounded-full bg-emerald-500"></span></span>
+          <span id="openText" class="font-semibold text-emerald-400">Open Now</span>
+          <span class="text-slate-600">•</span>
+          <span class="truncate"><i class="fa-solid fa-location-dot mr-1 text-slate-500"></i><span id="shortAddr"></span></span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <a id="callBtn" href="#" class="w-10 h-10 sm:w-auto sm:px-4 rounded-xl border border-slate-700 bg-slate-900/70 hover:border-cyan-400 hover:text-cyan-300 grid place-items-center sm:flex sm:gap-2 text-sm font-semibold transition" aria-label="Call store"><i class="fa-solid fa-phone"></i><span class="hidden sm:inline">Call</span></a>
+      <a id="waHeaderBtn" href="#" target="_blank" rel="noopener" class="btn-wa w-10 h-10 sm:w-auto sm:px-4 rounded-xl text-white grid place-items-center sm:flex sm:gap-2 text-sm font-semibold" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp text-lg"></i><span class="hidden sm:inline">WhatsApp</span></a>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 pb-28 md:pb-16">
+
+  <!-- HERO -->
+  <section class="pt-8 sm:pt-12 grid lg:grid-cols-2 gap-6 items-center">
+    <div class="fade-up">
+      <span class="inline-flex items-center gap-2 text-[11px] font-bold tracking-wider uppercase text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 rounded-full px-3 py-1.5">
+        <i class="fa-solid fa-bolt"></i> Certified Pre-Owned Phones
+      </span>
+      <h2 class="mt-4 text-[34px] sm:text-6xl font-extrabold text-white leading-[1.05] tracking-tight">
+        Sasta bhi.<br><span class="grad-text">Sachcha bhi.</span>
+      </h2>
+      <p class="mt-4 text-slate-400 max-w-lg text-[15px] leading-relaxed">Har phone 32-point check ke baad. 7-din warranty, original bill, aur dukaan pe test karke hi kharidiye. Pasand aaye toh WhatsApp pe book kijiye — phone aapke naam ka hold.</p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="#shop" class="btn-wa shine inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl text-white font-extrabold text-[15px]"><i class="fa-solid fa-bag-shopping"></i> Phones Dekhein</a>
+        <a id="heroCall" href="#" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl border border-slate-700 bg-slate-900/60 hover:border-cyan-400 font-bold text-[15px] transition"><i class="fa-solid fa-phone text-cyan-400"></i> Call Karein</a>
+      </div>
+      <div class="mt-8 grid grid-cols-3 gap-3 max-w-md">
+        <div class="glass border border-slate-800/80 rounded-2xl p-3 text-center"><p class="text-xl font-extrabold text-white" id="stCust"></p><p class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Happy Customers</p></div>
+        <div class="glass border border-slate-800/80 rounded-2xl p-3 text-center"><p class="text-xl font-extrabold text-white"><i class="fa-solid fa-star text-amber-400 text-base"></i> <span id="stRating"></span></p><p class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Google Rating</p></div>
+        <div class="glass border border-slate-800/80 rounded-2xl p-3 text-center"><p class="text-xl font-extrabold text-white" id="stSince"></p><p class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Trusted Since</p></div>
+      </div>
+    </div>
+    <div class="relative grid place-items-center min-h-[300px] sm:min-h-[420px] fade-up" style="animation-delay:.12s">
+      <div class="absolute w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-gradient-to-br from-cyan-500/30 to-emerald-500/20 blur-3xl"></div>
+      <div class="absolute w-64 h-64 sm:w-80 sm:h-80 rounded-full border border-cyan-500/20"></div>
+      <div class="absolute w-80 h-80 sm:w-[26rem] sm:h-[26rem] rounded-full border border-slate-800/80"></div>
+      <div id="heroPhone" class="hero-ph floaty relative w-[300px] sm:w-[400px]"></div>
+      <div class="absolute left-0 sm:left-6 top-10 glass border border-slate-700/80 rounded-2xl px-3 py-2 text-xs font-bold shadow-xl"><i class="fa-solid fa-battery-full text-emerald-400 mr-1.5"></i>Battery 89%</div>
+      <div class="absolute right-0 sm:right-6 bottom-14 glass border border-slate-700/80 rounded-2xl px-3 py-2 text-xs font-bold shadow-xl"><i class="fa-solid fa-shield-halved text-cyan-400 mr-1.5"></i>7-Day Warranty</div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <section class="mt-8 overflow-hidden rounded-2xl border border-slate-800/80 glass py-2.5">
+    <div id="ticker" class="marquee text-[13px] font-semibold text-slate-300"></div>
+  </section>
+
+  <!-- TRUST STRIP -->
+  <section class="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div class="glass border border-slate-800/80 rounded-2xl p-3.5 flex items-start gap-3"><div class="w-10 h-10 shrink-0 rounded-xl bg-cyan-500/10 text-cyan-400 grid place-items-center"><i class="fa-solid fa-microscope"></i></div><div><p class="text-[13px] font-bold text-white leading-tight">32-Point Quality Inspection</p><p class="text-[11px] text-slate-500 mt-0.5">Har part tested</p></div></div>
+    <div class="glass border border-slate-800/80 rounded-2xl p-3.5 flex items-start gap-3"><div class="w-10 h-10 shrink-0 rounded-xl bg-emerald-500/10 text-emerald-400 grid place-items-center"><i class="fa-solid fa-shield-halved"></i></div><div><p class="text-[13px] font-bold text-white leading-tight">7-Day Testing Warranty</p><p class="text-[11px] text-slate-500 mt-0.5">Befikar kharidiye</p></div></div>
+    <div class="glass border border-slate-800/80 rounded-2xl p-3.5 flex items-start gap-3"><div class="w-10 h-10 shrink-0 rounded-xl bg-cyan-500/10 text-cyan-400 grid place-items-center"><i class="fa-solid fa-gears"></i></div><div><p class="text-[13px] font-bold text-white leading-tight">100% Genuine Parts Guaranteed</p><p class="text-[11px] text-slate-500 mt-0.5">Koi duplicate part nahi</p></div></div>
+    <div class="glass border border-slate-800/80 rounded-2xl p-3.5 flex items-start gap-3"><div class="w-10 h-10 shrink-0 rounded-xl bg-emerald-500/10 text-emerald-400 grid place-items-center"><i class="fa-solid fa-file-invoice"></i></div><div><p class="text-[13px] font-bold text-white leading-tight">Original Bill & ID Verification</p><p class="text-[11px] text-slate-500 mt-0.5">100% legal source</p></div></div>
+  </section>
+
+  <!-- FILTERS -->
+  <section id="shop" class="mt-10 scroll-mt-20 sticky top-[64px] z-30 -mx-4 px-4 py-3 glass border-y border-slate-800/60">
+    <div class="flex gap-2">
+      <div class="relative flex-1">
+        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+        <input id="search" type="search" autocomplete="off" placeholder="Model ya storage search karein — iPhone 13, 256GB"
+          class="w-full bg-slate-900/80 border border-slate-800 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 outline-none rounded-2xl pl-11 pr-4 py-3.5 text-sm text-white placeholder-slate-500 transition">
+      </div>
+      <div class="relative">
+        <select id="sort" class="appearance-none h-full bg-slate-900/80 border border-slate-800 focus:border-cyan-500 outline-none rounded-2xl pl-3 pr-8 text-xs font-bold text-slate-200 cursor-pointer">
+          <option value="featured">Featured</option>
+          <option value="low">Price: Low → High</option>
+          <option value="high">Price: High → Low</option>
+          <option value="battery">Best Battery</option>
+          <option value="save">Biggest Saving</option>
+        </select>
+        <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none"></i>
+      </div>
+    </div>
+    <div id="brandPills" class="mt-3 flex gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 pb-1"></div>
+    <div id="quickChips" class="mt-2 flex gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 pb-1"></div>
+  </section>
+
+  <!-- GRID -->
+  <section class="mt-6">
+    <div class="flex items-end justify-between mb-4">
+      <h3 class="text-xl font-extrabold text-white">Available Phones</h3>
+      <p id="resultCount" class="text-xs text-slate-500 font-semibold"></p>
+    </div>
+    <div id="grid" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"></div>
+    <div id="empty" class="hidden text-center py-16 glass border border-slate-800/80 rounded-3xl">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-900 grid place-items-center text-slate-500 text-2xl"><i class="fa-solid fa-mobile-retro"></i></div>
+      <p class="mt-4 font-bold text-white">Is filter mein koi phone nahi mila</p>
+      <p class="text-sm text-slate-500 mt-1 px-6">Aapko jo chahiye bata dijiye — hum arrange kar denge.</p>
+      <a id="requestBtn" href="#" target="_blank" rel="noopener" class="btn-wa inline-flex items-center gap-2 mt-5 px-5 py-3 rounded-xl text-white text-sm font-bold"><i class="fa-brands fa-whatsapp"></i> Yeh Phone Mangwayein</a>
+      <button id="resetBtn" class="block mx-auto mt-3 text-xs text-cyan-400 hover:underline font-semibold">Filters reset karein</button>
+    </div>
+  </section>
+
+  <!-- SELL / EXCHANGE -->
+  <section class="mt-14 relative overflow-hidden rounded-3xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/15 via-slate-900 to-emerald-500/15 p-6 sm:p-10">
+    <div class="absolute -right-10 -top-10 w-56 h-56 rounded-full bg-emerald-500/20 blur-3xl"></div>
+    <div class="relative grid sm:grid-cols-[1fr_auto] gap-6 items-center">
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-300"><i class="fa-solid fa-rotate mr-1"></i>Sell / Exchange</span>
+        <h3 class="mt-2 text-2xl sm:text-3xl font-extrabold text-white leading-tight">Purana phone becho ya exchange karein</h3>
+        <p class="mt-2 text-slate-400 text-sm max-w-lg">Phone ka model aur condition WhatsApp pe bhej dijiye — 10 minute mein best price batate hain. Same-day payment, koi chakkar nahi.</p>
+      </div>
+      <a id="sellBtn" href="#" target="_blank" rel="noopener" class="btn-wa shine inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl text-white font-extrabold"><i class="fa-brands fa-whatsapp text-lg"></i> Price Pata Karein</a>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="mt-14">
+    <h3 class="text-xl font-extrabold text-white text-center">Kharidna hua <span class="grad-text">bahut aasaan</span></h3>
+    <div class="mt-6 grid sm:grid-cols-3 gap-4">
+      <div class="glass border border-slate-800/80 rounded-3xl p-5 text-center"><div class="w-12 h-12 mx-auto rounded-2xl bg-cyan-500/10 text-cyan-400 grid place-items-center text-lg"><i class="fa-solid fa-hand-pointer"></i></div><p class="mt-3 font-bold text-white">1. Phone chuniye</p><p class="text-xs text-slate-500 mt-1">Apni pasand ka model dekhiye aur diagnostic report check kijiye.</p></div>
+      <div class="glass border border-slate-800/80 rounded-3xl p-5 text-center"><div class="w-12 h-12 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-400 grid place-items-center text-lg"><i class="fa-brands fa-whatsapp"></i></div><p class="mt-3 font-bold text-white">2. WhatsApp pe book karein</p><p class="text-xs text-slate-500 mt-1">Ek tap mein message ready. Hum phone hold kar dete hain.</p></div>
+      <div class="glass border border-slate-800/80 rounded-3xl p-5 text-center"><div class="w-12 h-12 mx-auto rounded-2xl bg-cyan-500/10 text-cyan-400 grid place-items-center text-lg"><i class="fa-solid fa-store"></i></div><p class="mt-3 font-bold text-white">3. Aayein, test karein, lein</p><p class="text-xs text-slate-500 mt-1">Dukaan pe check karke hi payment. Bill aur warranty saath.</p></div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="mt-14">
+    <h3 class="text-xl font-extrabold text-white">Customers kya kehte hain</h3>
+    <div class="mt-5 flex gap-4 overflow-x-auto no-scrollbar -mx-4 px-4 snap-x pb-2">
+      <div class="snap-start shrink-0 w-[290px] glass border border-slate-800/80 rounded-3xl p-5"><div class="text-amber-400 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><p class="mt-3 text-sm text-slate-300 leading-relaxed">iPhone 13 liya, bilkul naye jaisa. Battery health jaisa bataya waisa hi nikla. Bill bhi diya.</p><div class="mt-4 flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 grid place-items-center text-slate-950 font-extrabold text-sm">R</div><div><p class="text-sm font-bold text-white">Rahul S.</p><p class="text-[11px] text-slate-500">Verified Buyer</p></div></div></div>
+      <div class="snap-start shrink-0 w-[290px] glass border border-slate-800/80 rounded-3xl p-5"><div class="text-amber-400 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><p class="mt-3 text-sm text-slate-300 leading-relaxed">Pehle WhatsApp pe sab clear bataya, dukaan pe aake test kiya. Price bhi sabse kam mili.</p><div class="mt-4 flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 grid place-items-center text-slate-950 font-extrabold text-sm">P</div><div><p class="text-sm font-bold text-white">Priya M.</p><p class="text-[11px] text-slate-500">Verified Buyer</p></div></div></div>
+      <div class="snap-start shrink-0 w-[290px] glass border border-slate-800/80 rounded-3xl p-5"><div class="text-amber-400 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><p class="mt-3 text-sm text-slate-300 leading-relaxed">OnePlus 11R liya. Ek hafte mein koi dikkat nahi aayi. Warranty ka bharosa tha isliye liya.</p><div class="mt-4 flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 grid place-items-center text-slate-950 font-extrabold text-sm">A</div><div><p class="text-sm font-bold text-white">Aman K.</p><p class="text-[11px] text-slate-500">Verified Buyer</p></div></div></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="mt-14 max-w-3xl">
+    <h3 class="text-xl font-extrabold text-white">Aksar pooche jaane wale sawal</h3>
+    <div class="mt-5 space-y-3">
+      <details class="glass border border-slate-800/80 rounded-2xl p-4"><summary class="flex items-center justify-between font-bold text-white text-sm">Kya phone ke saath bill milega?<i class="fa-solid fa-chevron-down chev text-slate-500 text-xs"></i></summary><p class="mt-3 text-sm text-slate-400">Haan, har phone ke saath dukaan ka pakka bill milta hai. Hum seller ka ID aur original bill bhi verify karte hain.</p></details>
+      <details class="glass border border-slate-800/80 rounded-2xl p-4"><summary class="flex items-center justify-between font-bold text-white text-sm">7-din ki warranty mein kya cover hota hai?<i class="fa-solid fa-chevron-down chev text-slate-500 text-xs"></i></summary><p class="mt-3 text-sm text-slate-400">7 din ke andar agar koi hardware ya software problem aaye toh phone badla ya theek kiya jata hai. Physical damage cover nahi hota.</p></details>
+      <details class="glass border border-slate-800/80 rounded-2xl p-4"><summary class="flex items-center justify-between font-bold text-white text-sm">Kya main kharidne se pehle phone check kar sakta hun?<i class="fa-solid fa-chevron-down chev text-slate-500 text-xs"></i></summary><p class="mt-3 text-sm text-slate-400">Bilkul. Dukaan pe aaiye, har function khud test kijiye, tabhi payment kijiye.</p></details>
+      <details class="glass border border-slate-800/80 rounded-2xl p-4"><summary class="flex items-center justify-between font-bold text-white text-sm">Payment kaise kar sakte hain?<i class="fa-solid fa-chevron-down chev text-slate-500 text-xs"></i></summary><p class="mt-3 text-sm text-slate-400">Cash, UPI aur card — sab chalta hai. Select phones pe EMI bhi mil sakti hai.</p></details>
+    </div>
+  </section>
+
+  <!-- VISIT STORE -->
+  <section class="mt-14 glass border border-slate-800/80 rounded-3xl p-6 sm:p-8 grid sm:grid-cols-[1fr_auto] gap-5 items-center">
+    <div>
+      <p class="text-[11px] font-bold uppercase tracking-wider text-cyan-400"><i class="fa-solid fa-location-dot mr-1"></i>Hamari Dukaan</p>
+      <h3 class="mt-1 text-xl font-extrabold text-white" id="storeName"></h3>
+      <p class="mt-1 text-sm text-slate-400" id="fullAddr"></p>
+      <p class="mt-1 text-sm text-slate-400"><i class="fa-regular fa-clock mr-1.5 text-emerald-400"></i><span id="hoursText"></span></p>
+    </div>
+    <a id="mapBtn" href="#" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl border border-cyan-500/50 bg-cyan-500/10 text-cyan-300 font-bold hover:bg-cyan-500/20 transition"><i class="fa-solid fa-diamond-turn-right"></i> Directions</a>
+  </section>
+
+  <footer class="mt-12 text-center text-xs text-slate-600 leading-relaxed">
+    <p><span class="text-slate-400 font-bold" id="footName"></span> • Made with ❤️ for smart buyers</p>
+    <p class="mt-1">Prices badal sakte hain • Stock limited hai</p>
+  </footer>
+</main>
+
+<!-- MOBILE STICKY BAR -->
+<div class="md:hidden fixed bottom-0 inset-x-0 z-40 glass border-t border-slate-800/80 px-4 pt-3 pb-[max(.75rem,env(safe-area-inset-bottom))] grid grid-cols-5 gap-2">
+  <a id="barCall" href="#" class="col-span-2 py-3 rounded-2xl border border-slate-700 bg-slate-900/70 text-center text-sm font-bold"><i class="fa-solid fa-phone text-cyan-400 mr-1.5"></i>Call</a>
+  <a id="barWa" href="#" target="_blank" rel="noopener" class="btn-wa col-span-3 py-3 rounded-2xl text-white text-center text-sm font-extrabold"><i class="fa-brands fa-whatsapp mr-1.5 text-base"></i>WhatsApp Karein</a>
+</div>
+
+<!-- MODAL -->
+<div id="modalRoot" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div id="overlay" class="absolute inset-0 bg-black/75 backdrop-blur-sm opacity-0"></div>
+  <div class="absolute inset-0 flex items-end md:items-center justify-center pointer-events-none">
+    <div id="sheet" class="closed relative pointer-events-auto w-full md:max-w-3xl max-h-[92vh] md:max-h-[88vh] overflow-hidden flex flex-col bg-[#070b1c] border border-slate-800 rounded-t-3xl md:rounded-3xl shadow-[0_-20px_80px_-20px_rgba(6,182,212,.4)]">
+      <div class="md:hidden pt-2.5 pb-1 grid place-items-center"><span class="w-11 h-1.5 rounded-full bg-slate-700"></span></div>
+      <button id="closeModal" class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-slate-900/90 border border-slate-800 hover:border-cyan-500 grid place-items-center text-slate-300" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      <div id="modalBody" class="overflow-y-auto flex-1"></div>
+      <div id="modalFooter" class="p-4 border-t border-slate-800 bg-[#070b1c]/95 pb-[max(1rem,env(safe-area-inset-bottom))]"></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast fixed left-1/2 -translate-x-1/2 bottom-24 z-[60] opacity-0 translate-y-4 pointer-events-none glass border border-slate-700 rounded-full px-5 py-3 text-sm font-medium text-white shadow-xl"></div>
+
+<script id="td-data">window.TD_DATA=null;</script>
+<script>
+/* =====================================================
+   STORE CONFIG — dukandar yahan apni details badle
+   ===================================================== */
+const STORE = {
+  name: 'TrueDeals Mobile Hub',
+  whatsapp: '919876543210',          // country code + number, "+" ke bina
+  phone: '+919876543210',
+  shortAddress: 'Karol Bagh, Delhi',
+  address: 'Shop 12, Gaffar Market, Karol Bagh, New Delhi 110005',
+  openHour: 10, closeHour: 21,
+  hoursText: 'Roz subah 10 baje se raat 9 baje tak',
+  customers: '5,000+', rating: '4.8', since: '2016',
+  offer: '🪔 Diwali Dhamaka: WhatsApp pe book karein, ₹500 extra off paayein!'   // khali chhod do toh banner hat jayega
+};
+
+/* =====================================================
+   INVENTORY
+   cam: iphone | samsung | oneplus | vivo | realme | redmi
+   body: phone ke back ka color, wp: screen wallpaper, glow: card ka chamak
+   ===================================================== */
+const PHONES = [
+  { id:1, brand:'Apple', name:'iPhone 14', color:'Midnight', ram:6, storage:128, battery:89, condition:'Mint', score:'10/10', price:44999, mrp:79900, box:'Box + Original 20W Charger', flagship:true, stock:true, left:1, tag:'Just Arrived', os:'iOS', age:'14 months old', warranty:'Store warranty 7 days', cam:'iphone', body:['#3a4152','#12161f'], wp:['#0ea5e9','#7c3aed'], glow:'#06b6d4' },
+  { id:2, brand:'Apple', name:'iPhone 13', color:'Starlight', ram:4, storage:128, battery:87, condition:'Superb', score:'9.5/10', price:34999, mrp:69900, box:'Box + Cable', flagship:true, stock:true, left:2, tag:'Best Seller', os:'iOS', age:'2 years old', warranty:'Store warranty 7 days', warn:{Speaker:'Grill pe halka wear, awaaz bilkul theek'}, cam:'iphone', body:['#f4efe6','#cfc6b6'], wp:['#f472b6','#6366f1'], glow:'#f4efe6' },
+  { id:3, brand:'OnePlus', name:'OnePlus 11R 5G', color:'Sonic Black', ram:8, storage:128, battery:94, condition:'Mint', score:'10/10', price:22999, mrp:39999, box:'Box + Original 100W Charger', flagship:false, stock:true, left:2, tag:'Hot Deal', os:'Android', age:'9 months old', warranty:'Brand warranty till Jun 2027', cam:'oneplus', body:['#454a55','#101319'], wp:['#ef4444','#f97316'], glow:'#ef4444' },
+  { id:4, brand:'Samsung', name:'Samsung Galaxy S23', color:'Phantom Black', ram:8, storage:256, battery:91, condition:'Superb', score:'9.5/10', price:38999, mrp:89999, box:'Box + Cable', flagship:true, stock:true, left:1, tag:'Flagship', os:'Android', age:'1.5 years old', warranty:'Store warranty 7 days', cam:'samsung', body:['#2d2d33','#0b0b0e'], wp:['#8b5cf6','#22d3ee'], glow:'#8b5cf6' },
+  { id:5, brand:'Samsung', name:'Samsung Galaxy S21 FE', color:'Graphite', ram:8, storage:128, battery:84, condition:'Good', score:'9/10', price:18499, mrp:54999, box:'Phone + Charger', flagship:false, stock:true, left:3, tag:'', os:'Android', age:'3 years old', warranty:'Store warranty 7 days', warn:{Body:'Frame pe halke hairline scratches'}, cam:'samsung', body:['#757a85','#2f3239'], wp:['#10b981','#0ea5e9'], glow:'#94a3b8' },
+  { id:6, brand:'Vivo', name:'Vivo V29 5G', color:'Peak Blue', ram:8, storage:128, battery:92, condition:'Mint', score:'10/10', price:16499, mrp:32999, box:'Box + Original 80W Charger', flagship:false, stock:true, left:2, tag:'Hot Deal', os:'Android', age:'1 year old', warranty:'Brand warranty till Aug 2027', cam:'vivo', body:['#6bb0ff','#2250c9'], wp:['#f59e0b','#ec4899'], glow:'#3b82f6' },
+  { id:7, brand:'Realme', name:'Realme 12 Pro+ 5G', color:'Submarine Blue', ram:8, storage:256, battery:96, condition:'Mint', score:'10/10', price:14499, mrp:29999, box:'Full Box + Charger', flagship:false, stock:false, left:0, tag:'', os:'Android', age:'7 months old', warranty:'Brand warranty till Mar 2027', cam:'realme', body:['#34e8c8','#0b6aa5'], wp:['#22d3ee','#3b82f6'], glow:'#14b8a6' },
+  { id:8, brand:'Xiaomi', name:'Redmi Note 13 Pro', color:'Arctic White', ram:8, storage:128, battery:95, condition:'Superb', score:'9.5/10', price:12999, mrp:25999, box:'Box + Original 67W Charger', flagship:false, stock:true, left:3, tag:'Budget King', os:'Android', age:'8 months old', warranty:'Brand warranty till Mar 2027', cam:'redmi', body:['#ffffff','#cdd5e1'], wp:['#fb923c','#e11d48'], glow:'#e2e8f0' }
+];
+
+const BRANDS = ['All','Apple','OnePlus','Samsung','Vivo','Realme','Xiaomi','Google Pixel'];
+const CAT_IMG = {}, HIDDEN_CATS = new Set();
+/* ADMIN OVERRIDE — admin.html se kiya gaya data yahan apply hota hai */
+(function(){
+  try{
+    let d = window.TD_DATA || null;
+    try{ const l = JSON.parse(localStorage.getItem('td_admin_data')||'null'); if(l) d = l; }catch(e){}
+    if(d){
+      if(d.STORE) Object.assign(STORE, d.STORE);
+      if(Array.isArray(d.PHONES)){ PHONES.length = 0; d.PHONES.forEach(p => PHONES.push(p)); }
+      if(Array.isArray(d.CATS) && d.CATS.length){
+        BRANDS.length = 0; BRANDS.push('All');
+        d.CATS.filter(c => c.name).forEach(c => { if(c.show === false){ HIDDEN_CATS.add(c.name); return; } BRANDS.push(c.name); if(c.img) CAT_IMG[c.name] = c.img; });
+      }
+    }
+  }catch(e){}
+})();
+PHONES.forEach(p => { if(!BRANDS.includes(p.brand) && !HIDDEN_CATS.has(p.brand)) BRANDS.push(p.brand); });
+const BRAND_ICON = { Apple:'fa-brands fa-apple', Samsung:'fa-solid fa-mobile-screen', All:'fa-solid fa-layer-group' };
+const CHIPS = [
+  { key:'under15', label:'Below ₹15k', icon:'fa-indian-rupee-sign' },
+  { key:'flagship', label:'Flagship Deals', icon:'fa-crown' },
+  { key:'battery85', label:'Battery 85%+', icon:'fa-battery-full' }
+];
+
+/* =====================================================
+   HELPERS
+   ===================================================== */
+const state = { q:'', brand:'All', chips:new Set(), sort:'featured' };
+const $ = s => document.querySelector(s);
+const inr = n => '₹' + n.toLocaleString('en-IN');
+const saving = p => p.mrp - p.price;
+const specStr = p => `${p.ram}GB/${p.storage}GB`;
+const waLink = msg => `https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent(msg)}`;
+
+function bookingMessage(p) {
+  return [
+    `Hello ${STORE.name}! 👋`, ``,
+    `Mujhe yeh phone *book* karna hai:`,
+    `📱 *${p.name}* (${p.color})`,
+    `💾 ${specStr(p)}`,
+    `⭐ Condition: ${p.condition} ${p.score}`,
+    `🔋 Battery Health: ${p.battery}%`,
+    `📦 ${p.box}`,
+    `💰 Price: *${inr(p.price)}* (MRP ${inr(p.mrp)})`, ``,
+    `Kya yeh abhi available hai? Main dukaan pe aakar check karke lena chahta/chahti hun. Please hold kar dijiye. 🙏`
+  ].join('\n');
+}
+const notifyMessage = p => `Hello ${STORE.name}! 👋\n\n*${p.name}* (${specStr(p)}) sold out dikh raha hai. Jab isi budget (around ${inr(p.price)}) mein aisa koi phone aaye toh please mujhe bata dijiye. 🙏`;
+
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.remove('opacity-0','translate-y-4'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.add('opacity-0','translate-y-4'),2200); }
+
+/* =====================================================
+   PHONE ILLUSTRATION (model-wise SVG — koi external image nahi)
+   ===================================================== */
+function phoneSVG(p) {
+  const id = 'p' + p.id + Math.random().toString(36).slice(2,6);
+  const [c1,c2] = p.body, [w1,w2] = p.wp;
+  const lens = (cx,cy,r) => `<circle cx="${cx}" cy="${cy}" r="${r+2.6}" fill="#171a21" stroke="#aab2c0" stroke-opacity=".6" stroke-width="1.2"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#${id}l)"/><circle cx="${cx-r*.32}" cy="${cy-r*.32}" r="${r*.26}" fill="#fff" fill-opacity=".55"/>`;
+  const flash = (x,y) => `<circle cx="${x}" cy="${y}" r="2.6" fill="#ffe8a3"/>`;
+  let cam = '';
+  switch (p.cam) {
+    case 'iphone':
+      cam = `<rect x="9" y="9" width="48" height="48" rx="13" fill="#0c0f15" fill-opacity=".88" stroke="#fff" stroke-opacity=".18"/>${lens(24,24,8.5)}${lens(41,41,8.5)}${flash(42,21)}`; break;
+    case 'samsung':
+      cam = lens(22,24,7)+lens(22,50,7)+lens(22,76,7)+flash(42,24)+flash(42,36); break;
+    case 'oneplus':
+      cam = `<circle cx="34" cy="34" r="29" fill="#0c0f15" stroke="#d3d8e2" stroke-width="2.6"/><circle cx="34" cy="34" r="25" fill="none" stroke="#fff" stroke-opacity=".12"/>${lens(24,25,7)}${lens(44,25,7)}${lens(34,45,7)}${flash(52,50)}`; break;
+    case 'vivo':
+      cam = `<rect x="8" y="8" width="52" height="60" rx="16" fill="#0c0f15" fill-opacity=".88" stroke="#fff" stroke-opacity=".2"/>${lens(24,25,8)}${lens(24,50,8)}<circle cx="46" cy="30" r="6" fill="#fff" fill-opacity=".85"/>`; break;
+    case 'realme':
+      cam = `<circle cx="36" cy="36" r="30" fill="#0c0f15" stroke="#ffffff" stroke-opacity=".5" stroke-width="2"/><circle cx="36" cy="36" r="22" fill="none" stroke="#fff" stroke-opacity=".15"/>${lens(36,36,13)}${lens(22,54,5)}${lens(50,54,5)}`; break;
+    case 'redmi':
+      cam = `<rect x="8" y="8" width="38" height="68" rx="14" fill="#0c0f15" fill-opacity=".88" stroke="#fff" stroke-opacity=".2"/>${lens(27,26,8.5)}${lens(27,52,8.5)}${flash(52,18)}`; break;
+  }
+  const island = p.cam === 'iphone'
+    ? `<rect x="36" y="9" width="32" height="9" rx="4.5" fill="#000"/>`
+    : `<circle cx="52" cy="12" r="3.3" fill="#000"/>`;
+  return `
+<svg viewBox="0 0 320 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${p.name} ${p.color}">
+  <defs>
+    <linearGradient id="${id}b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient>
+    <linearGradient id="${id}w" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${w1}"/><stop offset="1" stop-color="${w2}"/></linearGradient>
+    <radialGradient id="${id}l" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#4a5f8f"/><stop offset=".55" stop-color="#101626"/><stop offset="1" stop-color="#03050a"/></radialGradient>
+    <linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <!-- BACK -->
+  <g transform="translate(56 24) rotate(-8 52 106)">
+    <rect x="-1.5" y="40" width="3" height="22" rx="1.5" fill="${c2}"/>
+    <rect x="102.5" y="58" width="3" height="34" rx="1.5" fill="${c2}"/>
+    <rect width="104" height="212" rx="20" fill="url(#${id}b)" stroke="#fff" stroke-opacity=".22"/>
+    <rect width="104" height="212" rx="20" fill="url(#${id}g)"/>
+    ${cam}
+    <text x="52" y="196" text-anchor="middle" font-size="7" font-weight="700" letter-spacing="2" fill="#fff" fill-opacity=".35" font-family="sans-serif">${p.brand.toUpperCase()}</text>
+  </g>
+  <!-- FRONT -->
+  <g transform="translate(160 36) rotate(7 52 106)">
+    <rect width="104" height="212" rx="20" fill="#06080e" stroke="${c1}" stroke-width="2.2"/>
+    <rect x="3.5" y="3.5" width="97" height="205" rx="17" fill="url(#${id}w)"/>
+    <circle cx="80" cy="150" r="42" fill="#fff" fill-opacity=".1"/>
+    <circle cx="18" cy="190" r="34" fill="#000" fill-opacity=".18"/>
+    <text x="52" y="72" text-anchor="middle" font-size="30" font-weight="800" fill="#fff" font-family="sans-serif">9:41</text>
+    <text x="52" y="88" text-anchor="middle" font-size="7.5" font-weight="600" fill="#fff" fill-opacity=".85" font-family="sans-serif">Monday, 2 November</text>
+    ${island}
+    <rect x="38" y="200" width="28" height="3" rx="1.5" fill="#fff" fill-opacity=".75"/>
+    <rect x="3.5" y="3.5" width="97" height="205" rx="17" fill="url(#${id}g)" opacity=".7"/>
+  </g>
+</svg>`;
+}
+
+
+/* PHOTO SUPPORT — admin se upload ki gayi real photos; na ho to illustration */
+function phoneVisual(p, cls) {
+  const ph = (p.photos || []).filter(Boolean);
+  return ph.length
+    ? `<img src="${ph[0]}" alt="${p.name} ${p.color}" loading="lazy" class="mx-auto w-auto object-contain ${cls || 'max-h-56'}" style="filter:drop-shadow(0 20px 22px rgba(0,0,0,.55))">`
+    : phoneSVG(p);
+}
+function photoGallery(p, sold) {
+  const ph = (p.photos || []).filter(Boolean);
+  if (!ph.length) return `<div class="w-[290px] max-w-full ${sold?'grayscale opacity-50':''}">${phoneSVG(p)}</div>`;
+  const thumbs = ph.length > 1 ? `<div class="flex gap-2 justify-center">${ph.map((s,i) => `<img src="${s}" alt="photo ${i+1}" onclick="document.getElementById('mImg').src=this.src" class="w-11 h-11 rounded-lg object-cover border border-slate-700 cursor-pointer hover:border-cyan-400">`).join('')}</div>` : '';
+  return `<div class="w-full px-4 py-2 flex flex-col items-center gap-2 ${sold?'grayscale opacity-60':''}"><img id="mImg" src="${ph[0]}" alt="${p.name}" class="max-h-44 md:max-h-72 w-auto object-contain" style="filter:drop-shadow(0 20px 22px rgba(0,0,0,.55))">${thumbs}</div>`;
+}
+
+/* =====================================================
+   HEADER / STATIC CONTENT
+   ===================================================== */
+function initStatic() {
+  $('#callBtn').href = $('#heroCall').href = $('#barCall').href = 'tel:' + STORE.phone;
+  const hello = waLink(`Hello ${STORE.name}! Mujhe aapke pre-owned phones ke baare mein jaanna hai.`);
+  $('#waHeaderBtn').href = $('#barWa').href = hello;
+  $('#sellBtn').href = waLink(`Hello ${STORE.name}! Mujhe apna purana phone bechna/exchange karna hai.\n\nModel: \nStorage: \nCondition: \nBox/Bill hai? `);
+  $('#shortAddr').textContent = STORE.shortAddress;
+  $('#fullAddr').textContent = STORE.address;
+  $('#hoursText').textContent = STORE.hoursText;
+  $('#storeName').textContent = STORE.name;
+  $('#footName').textContent = STORE.name;
+  $('#mapBtn').href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(STORE.name + ' ' + STORE.address);
+  $('#stCust').textContent = STORE.customers; $('#stRating').textContent = STORE.rating; $('#stSince').textContent = STORE.since;
+  if (STORE.offer) { $('#offerText').textContent = STORE.offer; $('#offerBar').classList.remove('hidden'); }
+  $('#heroPhone').innerHTML = phoneVisual(PHONES[0], 'max-h-72');
+  const items = PHONES.filter(p => p.stock).map(p => `<span class="px-5 whitespace-nowrap"><span class="text-emerald-400">●</span> ${p.name} <b class="text-white">${inr(p.price)}</b>${p.left===1?' <span class="text-amber-400">• Sirf 1 bacha</span>':''}</span>`).join('');
+  $('#ticker').innerHTML = items + items;
+}
+
+function updateOpenStatus() {
+  const h = new Date().getHours(), open = h >= STORE.openHour && h < STORE.closeHour;
+  const dot = $('#openDot'), txt = $('#openText');
+  txt.textContent = open ? 'Open Now' : 'Band hai • Subah 10 baje khulega';
+  txt.className = 'font-semibold ' + (open ? 'text-emerald-400' : 'text-amber-400');
+  dot.className = (open ? 'pulse-dot ' : '') + 'relative inline-block w-2 h-2 rounded-full ' + (open ? 'bg-emerald-500' : 'bg-amber-500');
+}
+
+/* =====================================================
+   FILTERS
+   ===================================================== */
+function renderPills() {
+  $('#brandPills').innerHTML = BRANDS.map(b => {
+    const a = state.brand === b, ic = CAT_IMG[b] ? `<img src="${CAT_IMG[b]}" alt="" class="inline-block w-5 h-5 rounded-full object-cover mr-1.5 align-middle">` : BRAND_ICON[b] ? `<i class="${BRAND_ICON[b]} mr-1.5"></i>` : '';
+    return `<button data-brand="${b}" class="shrink-0 px-4 py-2 rounded-full border text-[13px] font-bold transition-all duration-300 ${a ? 'pill-active' : 'border-slate-800 bg-slate-900/70 text-slate-300 hover:border-cyan-500/60'}">${ic}${b}</button>`;
+  }).join('');
+}
+function renderChips() {
+  $('#quickChips').innerHTML = CHIPS.map(c => {
+    const a = state.chips.has(c.key);
+    return `<button data-chip="${c.key}" class="shrink-0 px-3.5 py-1.5 rounded-full border text-xs font-bold transition-all duration-300 ${a ? 'bg-emerald-500/15 border-emerald-400 text-emerald-300 shadow-[0_0_18px_rgba(16,185,129,.35)]' : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:text-white hover:border-slate-600'}"><i class="fa-solid ${c.icon} mr-1.5 text-[10px]"></i>${c.label}</button>`;
+  }).join('');
+}
+$('#brandPills').addEventListener('click', e => { const b = e.target.closest('[data-brand]'); if(!b) return; state.brand = b.dataset.brand; renderPills(); renderGrid(); b.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}); });
+$('#quickChips').addEventListener('click', e => { const c = e.target.closest('[data-chip]'); if(!c) return; const k=c.dataset.chip; state.chips.has(k)?state.chips.delete(k):state.chips.add(k); renderChips(); renderGrid(); });
+$('#search').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); renderGrid(); });
+$('#sort').addEventListener('change', e => { state.sort = e.target.value; renderGrid(); });
+$('#resetBtn').addEventListener('click', () => { state.q=''; state.brand='All'; state.chips.clear(); state.sort='featured'; $('#search').value=''; $('#sort').value='featured'; renderPills(); renderChips(); renderGrid(); });
+
+function filtered() {
+  let list = PHONES.filter(p => {
+    if (state.brand !== 'All' && p.brand !== state.brand) return false;
+    if (state.chips.has('under15') && p.price >= 15000) return false;
+    if (state.chips.has('flagship') && !p.flagship) return false;
+    if (state.chips.has('battery85') && p.battery < 85) return false;
+    if (state.q) {
+      const hay = `${p.brand} ${p.name} ${p.color} ${p.ram}gb ${p.storage}gb ${p.ram}gb/${p.storage}gb ${p.ram}/${p.storage} ${p.storage}`.toLowerCase();
+      return state.q.split(/\s+/).every(t => hay.includes(t));
+    }
+    return true;
+  });
+  const s = state.sort;
+  if (s === 'low') list.sort((a,b)=>a.price-b.price);
+  else if (s === 'high') list.sort((a,b)=>b.price-a.price);
+  else if (s === 'battery') list.sort((a,b)=>b.battery-a.battery);
+  else if (s === 'save') list.sort((a,b)=>saving(b)-saving(a));
+  else list.sort((a,b)=>(b.stock-a.stock));   // in-stock pehle
+  return list;
+}
+
+/* =====================================================
+   CARDS
+   ===================================================== */
+const condColor = c => c==='Mint' ? 'from-emerald-400 to-cyan-400' : c==='Superb' ? 'from-cyan-400 to-sky-400' : 'from-amber-300 to-yellow-400';
+const batColor = b => b>=90 ? 'text-emerald-300 border-emerald-500/30 bg-emerald-500/10' : b>=85 ? 'text-cyan-300 border-cyan-500/30 bg-cyan-500/10' : 'text-amber-300 border-amber-500/30 bg-amber-500/10';
+const spot = p => `background: radial-gradient(circle at 50% 72%, ${p.glow}55, transparent 62%), radial-gradient(circle at 50% 0%, rgba(255,255,255,.05), transparent 60%), linear-gradient(180deg,#0b1226,#060a17);`;
+
+function cardHTML(p, i) {
+  const sold = !p.stock, pct = Math.round(saving(p)/p.mrp*100);
+  return `
+  <article class="card fade-up glass border border-slate-800/80 rounded-3xl overflow-hidden flex flex-col" style="animation-delay:${i*60}ms">
+    <div class="relative h-60 cursor-pointer overflow-hidden grid place-items-center" style="${spot(p)}" data-open="${p.id}">
+      <div class="ph w-[260px] ${sold ? 'grayscale opacity-50' : ''}">${phoneVisual(p)}</div>
+      <span class="absolute top-3 left-3 text-[11px] font-extrabold text-slate-950 bg-gradient-to-r ${condColor(p.condition)} px-2.5 py-1 rounded-full shadow-lg">${p.condition} ${p.score}</span>
+      <span class="absolute top-3 right-3 text-[11px] font-extrabold text-white bg-rose-500/90 px-2.5 py-1 rounded-full shadow-lg">${pct}% OFF</span>
+      ${!sold && p.tag ? `<span class="absolute bottom-3 left-3 text-[10px] font-bold text-cyan-200 bg-slate-950/70 backdrop-blur border border-cyan-500/30 px-2.5 py-1 rounded-full">${p.tag}</span>` : ''}
+      ${!sold && p.left <= 2 ? `<span class="absolute bottom-3 right-3 text-[10px] font-bold text-amber-300 bg-slate-950/70 backdrop-blur border border-amber-500/30 px-2.5 py-1 rounded-full">🔥 Sirf ${p.left} bacha</span>` : ''}
+      ${sold ? `<div class="absolute inset-0 grid place-items-center bg-slate-950/40"><span class="rotate-[-8deg] px-5 py-2 rounded-xl border-2 border-red-500/80 text-red-400 font-black tracking-widest text-lg bg-slate-950/70">SOLD OUT</span></div>` : ''}
+    </div>
+    <div class="p-4 flex flex-col flex-1">
+      <p class="text-[11px] uppercase tracking-widest text-slate-500 font-bold">${p.brand}</p>
+      <h4 class="text-lg font-extrabold text-white leading-tight">${p.name}</h4>
+      <p class="text-xs text-slate-500 mt-0.5">${p.color} • ${p.age}</p>
+      <div class="flex flex-wrap gap-1.5 mt-3">
+        <span class="text-[11px] font-bold px-2.5 py-1 rounded-full border border-slate-700 bg-slate-900 text-slate-200"><i class="fa-solid fa-memory mr-1 text-cyan-400"></i>${specStr(p)}</span>
+        <span class="text-[11px] font-bold px-2.5 py-1 rounded-full border ${batColor(p.battery)}">🔋 ${p.battery}% Health</span>
+        <span class="text-[11px] font-bold px-2.5 py-1 rounded-full border border-slate-700 bg-slate-900 text-slate-300">📦 ${p.box}</span>
+      </div>
+      <div class="mt-4 flex items-end justify-between gap-2">
+        <div><p class="text-[26px] leading-none font-extrabold text-white tracking-tight">${inr(p.price)}</p><p class="text-xs text-slate-500 line-through mt-1">MRP ${inr(p.mrp)}</p></div>
+        <span class="text-[11px] font-extrabold text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1.5 rounded-lg shadow-[0_0_16px_rgba(16,185,129,.22)]">You Save ${inr(saving(p))}</span>
+      </div>
+      <div class="grid grid-cols-5 gap-2 mt-4">
+        <button data-open="${p.id}" class="col-span-2 py-3 rounded-xl border border-slate-700 bg-slate-900/70 hover:border-cyan-400 hover:text-cyan-300 text-xs font-bold transition"><i class="fa-solid fa-list-check mr-1"></i>Quick Specs</button>
+        ${sold
+          ? `<a href="${waLink(notifyMessage(p))}" target="_blank" rel="noopener" class="col-span-3 py-3 rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-300 text-xs font-bold text-center hover:bg-amber-500/20 transition"><i class="fa-regular fa-bell mr-1.5"></i>Mujhe Batayein</a>`
+          : `<a href="${waLink(bookingMessage(p))}" target="_blank" rel="noopener" class="btn-wa col-span-3 py-3 rounded-xl text-white text-xs font-extrabold text-center"><i class="fa-brands fa-whatsapp mr-1.5 text-sm"></i>Book on WhatsApp</a>`}
+      </div>
+    </div>
+  </article>`;
+}
+
+function renderGrid() {
+  const list = filtered();
+  $('#grid').innerHTML = list.map(cardHTML).join('');
+  $('#empty').classList.toggle('hidden', list.length > 0);
+  $('#resultCount').textContent = `${list.length} phone${list.length !== 1 ? 's' : ''}`;
+  if (!list.length) {
+    const q = $('#search').value.trim() || (state.brand !== 'All' ? state.brand : 'ek phone');
+    $('#requestBtn').href = waLink(`Hello ${STORE.name}! Mujhe yeh chahiye: ${q}. Kya aapke paas hai ya arrange ho sakta hai?`);
+  }
+}
+$('#grid').addEventListener('click', e => { const o = e.target.closest('[data-open]'); if (o) openModal(+o.dataset.open); });
+
+/* =====================================================
+   MODAL
+   ===================================================== */
+function diagnostics(p) {
+  const ios = p.os === 'iOS';
+  const base = [
+    { icon:'fa-camera', label:'Rear & Front Camera', note:'Focus, OIS aur flash theek' },
+    { icon:'fa-hand-pointer', label:'Touch & Display', note:'Dead pixel / ghost touch nahi' },
+    { icon: ios?'fa-face-smile':'fa-fingerprint', label: ios?'Face ID':'Fingerprint / Face Unlock', note:'Turant register hota hai' },
+    { icon:'fa-sun', label: ios?'True Tone':'Display Colour & Refresh Rate', note: ios?'Active aur calibrated':'Smooth aur calibrated' },
+    { icon:'fa-signal', label:'Network 5G / 4G / Wi-Fi', note:'SIM, 5G bands, Bluetooth OK' },
+    { icon:'fa-volume-high', label:'Speaker & Microphone', note:'Call aur music dono clear' },
+    { icon:'fa-plug', label:'Charging & Buttons', note:'Port, power, volume keys OK' },
+    { icon:'fa-lock', label:'iCloud / Google Lock', note:'Fully unlocked, clean IMEI' }
+  ].map(d => { const k = Object.keys(p.warn||{}).find(k => d.label.toLowerCase().includes(k.toLowerCase())); return k ? {...d, note:p.warn[k], warn:true} : d; });
+  base.push(p.warn && p.warn.Body ? { icon:'fa-mobile', label:'Body & Frame', note:p.warn.Body, warn:true } : { icon:'fa-mobile', label:'Body & Frame', note:'Koi dent ya crack nahi' });
+  return base;
+}
+
+function openModal(id) {
+  const p = PHONES.find(x => x.id === id); if (!p) return;
+  const sold = !p.stock, diag = diagnostics(p);
+  $('#modalBody').innerHTML = `
+    <div class="md:grid md:grid-cols-2">
+      <div class="relative h-64 md:h-full md:min-h-[380px] grid place-items-center overflow-hidden" style="${spot(p)}">
+        ${photoGallery(p, sold)}
+        <span class="absolute bottom-3 left-4 text-[11px] font-extrabold text-slate-950 bg-gradient-to-r ${condColor(p.condition)} px-2.5 py-1 rounded-full">${p.condition} ${p.score}</span>
+      </div>
+      <div class="p-5">
+        <p class="text-[11px] uppercase tracking-widest text-cyan-400 font-bold">${p.brand}</p>
+        <h3 id="mTitle" class="text-2xl font-extrabold text-white leading-tight">${p.name}</h3>
+        <p class="text-xs text-slate-500 mt-1">${p.color} • ${p.age}</p>
+        <div class="flex items-end gap-3 mt-3 flex-wrap">
+          <p class="text-3xl font-extrabold text-white">${inr(p.price)}</p>
+          <p class="text-sm text-slate-500 line-through pb-1">${inr(p.mrp)}</p>
+          <span class="text-[11px] font-extrabold text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-lg mb-1">Save ${inr(saving(p))}</span>
+        </div>
+        <div class="flex flex-wrap gap-1.5 mt-4">
+          <span class="text-[11px] font-bold px-2.5 py-1 rounded-full border border-slate-700 bg-slate-900"><i class="fa-solid fa-memory mr-1 text-cyan-400"></i>${specStr(p)}</span>
+          <span class="text-[11px] font-bold px-2.5 py-1 rounded-full border ${batColor(p.battery)}">🔋 ${p.battery}% Health</span>
+          <span class="text-[11px] font-bold px-2.5 py-1 rounded-full border border-slate-700 bg-slate-900">📦 ${p.box}</span>
+        </div>
+        <p class="mt-3 text-xs text-slate-400"><i class="fa-solid fa-shield-halved text-emerald-400 mr-1.5"></i>${p.warranty}</p>
+      </div>
+    </div>
+    <div class="px-5 pb-5">
+      <h4 class="text-sm font-extrabold text-white flex items-center gap-2"><i class="fa-solid fa-clipboard-check text-emerald-400"></i> Diagnostic Report <span class="text-[10px] font-semibold text-slate-500">• 32-point inspection</span></h4>
+      <ul class="mt-3 grid sm:grid-cols-2 gap-2">
+        ${diag.map(d => `
+        <li class="flex items-start gap-3 p-3 rounded-2xl border ${d.warn?'border-amber-500/30 bg-amber-500/5':'border-slate-800 bg-slate-900/50'}">
+          <div class="w-9 h-9 shrink-0 rounded-xl grid place-items-center ${d.warn?'bg-amber-500/15 text-amber-300':'bg-emerald-500/10 text-emerald-400'}"><i class="fa-solid ${d.icon} text-sm"></i></div>
+          <div class="min-w-0 flex-1"><p class="text-[13px] font-bold text-white leading-tight">${d.label}</p><p class="text-[11px] ${d.warn?'text-amber-300/90':'text-slate-500'} mt-0.5">${d.note}</p></div>
+          <i class="fa-solid ${d.warn?'fa-circle-exclamation text-amber-400':'fa-circle-check text-emerald-400'} mt-1"></i>
+        </li>`).join('')}
+      </ul>
+      <p class="mt-4 text-[11px] text-slate-500 leading-relaxed"><i class="fa-solid fa-circle-info mr-1"></i>Dukaan pe aakar phone khud test kijiye, tabhi payment. Har phone ka original bill aur ID verification hota hai.</p>
+    </div>`;
+  $('#modalFooter').innerHTML = sold
+    ? `<a href="${waLink(notifyMessage(p))}" target="_blank" rel="noopener" class="block w-full text-center py-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 text-amber-300 font-bold hover:bg-amber-500/20 transition"><i class="fa-regular fa-bell mr-2"></i>Sold Out — Aisa phone aaye toh batayein</a>`
+    : `<a href="${waLink(bookingMessage(p))}" target="_blank" rel="noopener" class="btn-wa shine block w-full text-center py-4 rounded-2xl text-white font-extrabold text-[15px]"><i class="fa-brands fa-whatsapp mr-2 text-lg"></i>Confirm Booking on WhatsApp</a>`;
+  $('#modalRoot').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  $('#modalBody').scrollTop = 0;
+  requestAnimationFrame(() => requestAnimationFrame(() => { $('#overlay').classList.remove('opacity-0'); $('#sheet').classList.remove('closed'); }));
+}
+function closeModal() {
+  $('#overlay').classList.add('opacity-0'); $('#sheet').classList.add('closed');
+  setTimeout(() => { $('#modalRoot').classList.add('hidden'); document.body.style.overflow = ''; }, 350);
+}
+$('#closeModal').addEventListener('click', closeModal);
+$('#overlay').addEventListener('click', closeModal);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#modalRoot').classList.contains('hidden')) closeModal(); });
+(() => { const s = $('#sheet'); let y0 = null;
+  s.addEventListener('touchstart', e => { if ($('#modalBody').scrollTop <= 0) y0 = e.touches[0].clientY; }, {passive:true});
+  s.addEventListener('touchend', e => { if (y0 !== null && e.changedTouches[0].clientY - y0 > 110) closeModal(); y0 = null; }, {passive:true});
+})();
+
+/* INIT */
+initStatic(); updateOpenStatus(); setInterval(updateOpenStatus, 60000);
+renderPills(); renderChips(); renderGrid();
+</script>
+</body>
+</html>
